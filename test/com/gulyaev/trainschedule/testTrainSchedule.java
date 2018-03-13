@@ -1,13 +1,12 @@
-package trainschedule;
+package com.gulyaev.trainschedule;
 
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import trainschedule.TrainSchedule.Train;
+import com.gulyaev.trainschedule.TrainSchedule.Train;
 
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
 /**
  * @author Dmitriy
@@ -26,8 +25,8 @@ public class testTrainSchedule {
         String station1 = "Sample Town 1";
         String station2 = "Sample Town 2";
         TrainSchedule instance = new TrainSchedule();
-        instance.addStation(tr, station1);
-        instance.addStation(tr, station2);
+        tr.addStation(station1);
+        tr.addStation(station2);
         ArrayList<String> ar = new ArrayList<>();
         ar.add("Sample Town 1");
         ar.add("Sample Town 2");
@@ -43,9 +42,9 @@ public class testTrainSchedule {
         String station1 = "Sample Town 1";
         String station2 = "Sample Town 2";
         TrainSchedule instance = new TrainSchedule();
-        instance.addStation(tr, station1);
-        instance.addStation(tr, station2);
-        instance.deleteStation(tr, station1);
+        tr.addStation(station1);
+        tr.addStation(station2);
+        tr.deleteStation(station1);
         ArrayList<String> ar = new ArrayList<>();
         ar.add("Sample Town 2");
         assertEquals(ar, tr.stations);
@@ -73,7 +72,7 @@ public class testTrainSchedule {
         try {
             instance.addTrain(name, 1, 1, "Station");
         } catch (IllegalArgumentException e) {
-            assertEquals("An entry of a train with such name already exists, please delete old entry first",
+            assertEquals("An entry of such train already exists, please delete old entry first",
                     e.getMessage());
         }
     }
@@ -87,7 +86,7 @@ public class testTrainSchedule {
         TrainSchedule instance = new TrainSchedule();
         instance.addTrain("Sample1", 0, 0, "Sample Town1");
         instance.addTrain("Sample2", 0, 0, "Sample Town2");
-        instance.deleteTrain(name);
+        instance.deleteTrain(name, 0, 0);
         ArrayList<Train> ar = new ArrayList<>();
         ar.add(new Train("Sample2", 0, 0, "Sample Town1"));
         assertEquals(ar, instance.trains);
@@ -110,12 +109,8 @@ public class testTrainSchedule {
         assertEquals(instance.trains.get(0), result);
         instance = new TrainSchedule();
         instance.addTrain("Bombom", 15, 29, "Station");
-        try {
-            instance.findTrain(destination, hours, minutes);
-        } catch (NoSuchElementException e) {
-            assertEquals("No suitable trains found", e.getMessage());
-        }
-
+        result = instance.findTrain(destination, hours, minutes);
+        assertEquals(null, result);
     }
 
 }

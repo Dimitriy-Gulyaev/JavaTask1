@@ -1,4 +1,4 @@
-package trainschedule;
+package com.gulyaev.trainschedule;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ public final class TrainSchedule {
         this.trains = new ArrayList<>();
     }
 
-    static final class Train {
+    public static final class Train {
 
         final String name;
 
@@ -30,6 +30,10 @@ public final class TrainSchedule {
         final String endStation;
         ArrayList<String> stations;
 
+        /**
+         * Constructor for Train object.
+         * Hours and minutes are converted into one value for simplified comparison of Train objects.
+         */
         Train(String s, int hours, int minutes, String e) {
             this.name = s;
             this.departure = 60 * hours + minutes;
@@ -37,56 +41,88 @@ public final class TrainSchedule {
             this.stations = new ArrayList<>();
         }
 
+        String getName() {
+            return this.name;
+        }
+
+        int getDeparture() {
+            return this.departure;
+        }
+
+        String getEndStation() {
+            return this.endStation;
+        }
+
+        ArrayList<String> getStations() {
+            return this.stations;
+        }
+
+        public void addStation(String station) {
+            this.stations.add(station);
+        }
+
+        public void deleteStation(String station) {
+            this.stations.remove(station);
+        }
+
+        /**
+         * Trains considered equal if their names and departure times are equal.
+         */
         @Override
         public boolean equals(Object object) {
             if (this == object) return true;
             if (object == null || object.getClass() != this.getClass()) return false;
             if (object instanceof Train) {
                 Train other = (Train) object;
-                return this.name.equals(other.name);
+                return this.name.equals(other.name) && this.departure == other.departure;
             }
             return false;
         }
-        /**
-         * Предполагается, что имя каждого поезда уникально. Иначе класс станет неудобным для пользователя.
-         * Если сравнивать поезда по всем параметрам, для удаления поезда придётся подавать на вход массив промежуточных
-         * станций, что крайне неудобно.
-         */
     }
 
-    public void addStation(Train tr, String station) {
-        tr.stations.add(station);
-    }
-
-    public void deleteStation(Train tr, String station) {
-        tr.stations.remove(station);
-    }
-
+    /**
+     * Simply adds new Train object to trains with all parameters required by constructor.
+     *
+     * @throws IllegalArgumentException if time format is invalid or in case of existence of a train with the same name
+     * and departure time.
+     */
     public void addTrain(String name, int hours, int minutes, String endSt) {
         if (hours < 0 || hours > 24 || minutes < 0 || minutes > 60)
             throw new IllegalArgumentException("Wrong time format");
         trains.forEach(train -> {
-            if (train.name.equals(name))
+            if (train.name.equals(name) && train.departure == hours * 60 + minutes)
                 throw new IllegalArgumentException(
-                        "An entry of a train with such name already exists, please delete old entry first");
+                        "An entry of such train already exists, please delete old entry first");
         });
         trains.add(new Train(name, hours, minutes, endSt));
     }
 
-    public void deleteTrain(String name) {
+    /**
+     * Deletes train by name and departure time
+     */
+    public void deleteTrain(String name, int hours, int minutes) {
         int i = 0;
         while (i < trains.size()) {
-            if (trains.get(i).name.equals(name)) {
+            if (trains.get(i).name.equals(name) && trains.get(i).departure == 60 * hours + minutes) {
                 trains.remove(i);
                 break;
             } else i++;
         }
     }
 
+    /**
+     * Seeks for train by station and current time.
+     *
+     * @param destination - needed station.
+     * @param hours       - current hours.
+     * @param minutes     - current minutes. These two parameters computed into one which is compared to each train's
+     * departure time.
+     * @return Train object which departure time is the closest to current time or null if such train doesn't exist.
+     */
     public Train findTrain(String destination, int hours, int minutes) {
-        int currentTime = hours * 60 + minutes;
+        int currentTime = 60 * hours + minutes;
         int min = currentTime;
-        Train wanted = trains.get(0);
+        Train wanted = null;
         for (int i = 0; i < trains.size(); i++) {
             if (trains.get(i).departure - currentTime > 0
                     && trains.get(i).departure - currentTime < min
@@ -95,11 +131,7 @@ public final class TrainSchedule {
                 wanted = trains.get(i);
             }
         }
-        if (min != currentTime) {
-            return wanted;
-        } else {
-            throw new NoSuchElementException("No suitable trains found");
-        }
+        return wanted;
     }
 
     @Override
