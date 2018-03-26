@@ -1,0 +1,47 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Java template
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+*.iws
+*.xml
+.idea/libraries
+out
+gen
+.gitignore
+.idea/workspace.xml
+src/main/
+src/test/
+target/
+/pom.xml
+src/com/dmitriy_gulyaevtrainschedule/
+src/trainschedule/
+test/trainschedule/
+/TrainSchedule.iml
+/src/main/
+!/.gitignore
